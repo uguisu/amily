@@ -1,12 +1,22 @@
+#!/usr/bin/python
+# -*- coding: UTF-8 -*-
 import io
+import sys
 
 utf8_with_bom = b'\xef\xbb\xbf'
+target_path = '/var/tmp/'
 
-# file_name_in = 'iris.csv'
-# file_name_in = 'iris_with_bom.csv'
-# file_name_in = 'iris_tab.csv'
-file_name_in = 'iris_with_empty_row.csv'
-file_name_out = 'iris_result.csv'
+
+def get_output_file_name(input_file_name):
+    """
+    Get output file full path & name via input file
+    :param input_file_name: input file
+    :return: output file full path & name
+    """
+    f_ls = input_file_name.split('/')
+    rtn = f_ls[len(f_ls) - 1]
+
+    return target_path + rtn
 
 
 def get_file_handle(f_name):
@@ -56,6 +66,9 @@ def replace(line_val, seq):
     return rtn
 
 
+file_name_in = sys.argv[1]
+file_name_out = get_output_file_name(file_name_in)
+
 line_in = get_file_handle_in_binary(file_name_in)
 line_out = io.open(file_name_out, 'w', encoding='utf-8', newline='\n')
 
@@ -63,7 +76,6 @@ line_out = io.open(file_name_out, 'w', encoding='utf-8', newline='\n')
 is_utf8_with_bom = line_in.read(3) == utf8_with_bom
 
 if is_utf8_with_bom:
-    # print('detecting bom')
 
     line_in.close()
     line_in = get_file_handle_in_binary(file_name_in)
@@ -83,8 +95,6 @@ if is_utf8_with_bom:
             line_out.write(line_to_write)
 
 else:
-    # print('without bom')
-
     line_in.close()
     line_in = get_file_handle(file_name_in)
 
