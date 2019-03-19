@@ -5,6 +5,7 @@ import sys
 
 utf8_with_bom = b'\xef\xbb\xbf'
 target_path = '/var/tmp/'
+cnt_ignore_lines = 0
 
 
 def get_output_file_name(input_file_name):
@@ -49,12 +50,12 @@ def replace(line_val, seq):
     # remove line break
     rtn = rtn.replace('\r\n', '')
     rtn = rtn.replace('\n', '')
+    rtn = rtn.replace('NULL', '0')
     # verify if there is a 'NULL' or 'ZZ' row
     _tmp_lst = rtn.split(',')
     for _tmp in _tmp_lst:
         _tmp = _tmp.strip().upper()
-        if 'NULL' == _tmp or 'ZZ' == _tmp:
-            # print('[warning] Find empty line, remove it')
+        if 'ZZ' == _tmp:
             rtn = None
             break
 
@@ -93,6 +94,8 @@ if is_utf8_with_bom:
         line_to_write = replace(l.decode('utf-8'), seq=seq)
         if line_to_write is not None:
             line_out.write(line_to_write)
+        else:
+            cnt_ignore_lines += 1
 
 else:
     line_in.close()
@@ -104,3 +107,7 @@ else:
         line_to_write = replace(l, seq=seq)
         if line_to_write is not None:
             line_out.write(line_to_write)
+        else:
+            cnt_ignore_lines += 1
+
+print('[WARNING] Ignore {0} lines'.format(cnt_ignore_lines))
