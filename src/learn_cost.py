@@ -2,12 +2,14 @@ import numpy as np
 import sys
 import matplotlib.pyplot as plt
 from keras.models import Sequential
-from keras.layers import Dense
+from keras.layers import Dense, Dropout
 from keras import optimizers, losses, metrics
 
 file_name = sys.argv[1]
 is_contain_header = True
 learn_rate = 0.00039
+dr_rate_1 = 0.15
+dr_rate_2 = 0.1
 train_test_rate = 0.7
 epoch = 150
 batch_size = 15
@@ -86,12 +88,10 @@ def load_csv():
 def make_network(lr):
     tmp_model = Sequential()
     tmp_model.add(Dense(128, activation='relu'))
+    tmp_model.add(Dropout(rate=dr_rate_1))
     tmp_model.add(Dense(64, activation='relu'))
+    tmp_model.add(Dropout(rate=dr_rate_2))
     tmp_model.add(Dense(1, activation='sigmoid'))
-    # target Accuracy
-    # model.compile(optimizer=optimizers.RMSprop(lr=0.00039),
-    #               loss=losses.binary_crossentropy,
-    #               metrics=[metrics.binary_accuracy])
     # target Mean_squared_error
     tmp_model.compile(optimizer=optimizers.RMSprop(lr=lr),
                       loss=losses.mean_squared_error,
@@ -132,7 +132,7 @@ def show_result(in_history):
 
 def get_business_data():
     t1 = clean_data([898,71,39,30,31,21,27,32,10659,6525,5085,4345,3852,3546,3339,3145])
-    # t1 = clean_data([4134,615,501,496,412,347,306,244,35186,26296,22687,19841,17626,16192,15037,14002])
+    t1 = np.vstack((t1, clean_data([4134,615,501,496,412,347,306,244,35186,26296,22687,19841,17626,16192,15037,14002])))
     return t1
 
 
@@ -159,4 +159,4 @@ show_result(in_history=history)
 pre_data = get_business_data()
 pre_data = np.hstack((pre_data[:, 1:8], pre_data[:, 9:16]))
 pre = model.predict_classes(pre_data)
-print(pre[0][0])
+print(pre[:,0])
