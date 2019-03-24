@@ -16,13 +16,6 @@ batch_size = 15
 
 
 def clean_data(cols):
-    # cols[1] = cols[1] / cols[0]
-    # cols[2] = cols[2] / cols[0]
-    # cols[3] = cols[3] / cols[0]
-    # cols[4] = cols[4] / cols[0]
-    # cols[5] = cols[5] / cols[0]
-    # cols[6] = cols[6] / cols[0]
-    # cols[7] = cols[7] / cols[0]
     cols[1] = cols[1] / cols[0]
     cols[2] = (cols[2] + cols[1]) / cols[0]
     cols[3] = (cols[3] + cols[2] + cols[1]) / cols[0]
